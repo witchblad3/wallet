@@ -26,6 +26,9 @@
 - `POST /api/transfer` `{ from_user_id, to_user_id, amount, comment? }`
 - `GET /api/balance/{user_id}` → `{ user_id, balance }`
 
+В проекте лежит файл с JSON для postman - Create Wallet API.postman_collection.json
+
+
 ## Надёжность
 - Все денежные операции в транзакциях
 - NUMERIC(14,2); без float
