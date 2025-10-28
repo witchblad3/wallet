@@ -1,0 +1,265 @@
+{
+	"info": {
+		"_postman_id": "d6725482-507a-4be4-b2f5-d42f5507fa39",
+		"name": "Wallet API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "30059021",
+		"_collection_link": "https://wave22.postman.co/workspace/378fa6e5-19a0-409d-9830-a6df65dd6da4/collection/30059021-d6725482-507a-4be4-b2f5-d42f5507fa39?action=share&source=collection_link&creator=30059021"
+	},
+	"item": [
+		{
+			"name": "Health",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status 200', () => pm.response.code === 200);",
+							"pm.test('Has status ok', () => pm.response.json().status === 'ok');"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/api/health",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"health"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Deposit",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status 200', () => pm.response.code === 200);",
+							"const j = pm.response.json();",
+							"pm.test('Has user_id', () => typeof j.user_id === 'number');",
+							"pm.test('Has balance string', () => typeof j.balance === 'string');",
+							"pm.environment.set('last_balance_user1', j.balance);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"user_id\": {{user1_id}},\n  \"amount\": \"500.00\",\n  \"comment\": \"Пополнение через карту\"\n}"
+				},
+				"url": {
+					"raw": "{{base_url}}/api/deposit",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"deposit"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Withdraw (insufficient 409)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status 409', () => pm.response.code === 409);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"user_id\": {{user2_id}},\n  \"amount\": \"999999.00\",\n  \"comment\": \"Тест недостатка средств\"\n}"
+				},
+				"url": {
+					"raw": "{{base_url}}/api/withdraw",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"withdraw"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Transfer",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status 200', () => pm.response.code === 200);",
+							"pm.test('Status ok', () => pm.response.json().status === 'ok');"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"from_user_id\": {{user1_id}},\n  \"to_user_id\": {{user2_id}},\n  \"amount\": \"150.00\",\n  \"comment\": \"Перевод другу\"\n}"
+				},
+				"url": {
+					"raw": "{{base_url}}/api/transfer",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"transfer"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Balance User1",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status 200', () => pm.response.code === 200);",
+							"const j = pm.response.json();",
+							"pm.test('Has balance', () => typeof j.balance === 'string');",
+							"pm.environment.set('balance_user1', j.balance);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/api/balance/{{user1_id}}",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"balance",
+						"{{user1_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Balance User2",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status 200', () => pm.response.code === 200);",
+							"const j = pm.response.json();",
+							"pm.test('Has balance', () => typeof j.balance === 'string');"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/api/balance/{{user2_id}}",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"balance",
+						"{{user2_id}}"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": ""
+		},
+		{
+			"key": "user1_id",
+			"value": "",
+			"type": "default"
+		},
+		{
+			"key": "user2_id",
+			"value": "",
+			"type": "default"
+		}
+	]
+}
